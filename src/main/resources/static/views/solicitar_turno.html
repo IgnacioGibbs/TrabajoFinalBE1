@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitar Turno</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- navbar -->
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="../index.html">Final Back-end I</a>
+        <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link crud-pacientes" href="/views/crud_odontologos.html"
+                    >CRUD Odontólogos</a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link crud-odontologos" href="/views/crud_pacientes.html"
+                    >CRUD Pacientes</a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"
+                    >Solicitar Turno</a
+                    >
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Table -->
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>CRUD turno</h1>
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">Crear Turno
+            </button>
+            <table class="table" id="pacientes-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Odontologo</th>
+                    <th>Paciente</th>
+                    <th>Fecha turno</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Los pacientes se listarán aquí dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createModalLabel">Crear Turno</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createForm">
+
+                    <div class="mb-3">
+                        <label for="selectPacientes" class="form-label">Seleccionar paciente</label>
+                        <select class="form-select" id="selectPacientes" name="selectPacientes" required></select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="selectOdontologos" class="form-label">Seleccionar odontólogo</label>
+                        <select class="form-select" id="selectOdontologos" name="selectOdontologos" required></select>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label for="fecha" class="form-label">Fecha del turno</label>
+                        <input type="date" class="form-control" id="fecha" name="fecha" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar turno</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+
+                    <div class="mb-3">
+                        <label for="selectPacientes" class="form-label">Seleccionar paciente</label>
+                        <select class="form-select" id="selectPacientesUpdate" name="selectPacientesUpdate" required></select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="selectOdontologos" class="form-label">Seleccionar odontólogo</label>
+                        <select class="form-select" id="selectOdontologosUpdate" name="selectOdontologosUpdate" required></select>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label for="fecha" class="form-label">Fecha del turno</label>
+                        <input type="date" class="form-control" id="fechaUpdate" name="fecha" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/js/all.min.js"></script>
+
+<script>
+
+    listarPacientes();
+    listarOdontologos();
+    listarTurnos();
+    listarPacientesUpdate();
+    listarOdontologosUpdate();
+
+    function listarTurnos() {
+        fetch('http://localhost:8001/turno/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los turnos');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const turnosTable = document.getElementById('pacientes-table');
+                const tbody = turnosTable.getElementsByTagName('tbody')[0];
+                tbody.innerHTML = '';
+
+                data.forEach(turno => {
+                    const row = document.createElement('tr');
+                    const fechaTurno = new Date(turno.fechaTurno);
+                    const dia = fechaTurno.getDate().toString().padStart(2, '0');
+                    const mes = (fechaTurno.getMonth() + 1).toString().padStart(2, '0');
+                    const anio = fechaTurno.getFullYear();
+                    const fechaFormateada = `${dia}/${mes}/${anio}`;
+
+                    row.innerHTML = `
+                    <td>${turno.id}</td>
+                    <td>${turno.odontologo.nombre} ${turno.odontologo.apellido}</td>
+                    <td>${turno.paciente.nombre} ${turno.paciente.apellido}</td>
+                    <td>${fechaFormateada}</td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm edit-button" data-id="${turno.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-button" data-id="${turno.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+
+                    tbody.appendChild(row);
+                });
+
+                const editButtons = document.getElementsByClassName('edit-button');
+                const deleteButtons = document.getElementsByClassName('delete-button');
+
+                for (let i = 0; i < editButtons.length; i++) {
+                    editButtons[i].addEventListener('click', () => {
+                        const turnoId = editButtons[i].getAttribute('data-id');
+                        mostrarFormularioEditar(turnoId);
+                    });
+                }
+
+                for (let i = 0; i < deleteButtons.length; i++) {
+                    deleteButtons[i].addEventListener('click', () => {
+                        const turnoId = deleteButtons[i].getAttribute('data-id');
+                        confirmarEliminacionTurno(turnoId);
+                    });
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+    function confirmarEliminacionTurno(id) {
+        if (confirm('¿Estás seguro de eliminar este turno?')) {
+            elimnarTurno(id);
+        }
+    }
+
+    function elimnarTurno(id) {
+        fetch(`http://localhost:8001/turno/${id}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al eliminar el paciente');
+                }
+                console.log('Paciente eliminado exitosamente');
+                listarTurnos();
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+    function listarPacientes() {
+        fetch('http://localhost:8001/paciente/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los pacientes');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const selectPacientes = document.getElementById('selectPacientes');
+                selectPacientes.innerHTML = '';
+
+                data.forEach(paciente => {
+                    const option = document.createElement('option');
+                    option.value = paciente.id;
+                    option.textContent = `${paciente.nombre} ${paciente.apellido}`;
+                    selectPacientes.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+    function listarOdontologos() {
+        fetch('http://localhost:8001/odontologo/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los odontólogos');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const selectOdontologos = document.getElementById('selectOdontologos');
+                selectOdontologos.innerHTML = '';
+
+                data.forEach(odontologo => {
+                    const option = document.createElement('option');
+                    option.value = odontologo.id;
+                    option.textContent = `${odontologo.nombre} ${odontologo.apellido}`;
+                    selectOdontologos.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+    function listarPacientesUpdate() {
+        fetch('http://localhost:8001/paciente/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los pacientes');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const selectPacientes = document.getElementById('selectPacientesUpdate');
+                selectPacientes.innerHTML = '';
+
+                data.forEach(paciente => {
+                    const option = document.createElement('option');
+                    option.value = paciente.id;
+                    option.textContent = `${paciente.nombre} ${paciente.apellido}`;
+                    selectPacientes.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+    function listarOdontologosUpdate() {
+        fetch('http://localhost:8001/odontologo/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los odontólogos');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const selectOdontologos = document.getElementById('selectOdontologosUpdate');
+                selectOdontologos.innerHTML = '';
+
+                data.forEach(odontologo => {
+                    const option = document.createElement('option');
+                    option.value = odontologo.id;
+                    option.textContent = `${odontologo.nombre} ${odontologo.apellido}`;
+                    selectOdontologos.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+
+    const createForm = document.getElementById('createForm');
+    const createModal = new bootstrap.Modal(document.getElementById('createModal'));
+
+    createForm.addEventListener('submit', event => {
+        event.preventDefault();
+
+        const idPacienteSelect = document.getElementById('selectPacientes');
+        const idOdontologoSelect = document.getElementById('selectOdontologos');
+        const fechaTurnoInput = document.getElementById('fecha');
+        console.log(idPacienteSelect)
+        console.log(idOdontologoSelect)
+
+        fetch('http://localhost:8001/turno/', {
+            method: 'POST',
+            body: JSON.stringify({
+                fechaTurno: fechaTurnoInput.value,
+                paciente: {
+                    id: idPacienteSelect.value,
+                },
+                odontologo: {
+                    id: idOdontologoSelect.value,
+                },
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al crear el turno');
+                }
+                createModal.hide();
+                listarTurnos();
+                console.log('turno creado exitosamente');
+                createForm.reset();
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    });
+
+
+    function mostrarFormularioEditar(id) {
+        fetch(`http://localhost:8001/turno/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los datos del paciente');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const idPacienteSelect = document.getElementById('selectPacientesUpdate');
+                const idOdontologoSelect = document.getElementById('selectOdontologosUpdate');
+                const fechaTurnoInput = document.getElementById('fechaUpdate');
+
+                fechaTurnoInput.value = data.fechaTurno;
+
+                const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+                editModal.show();
+
+                editForm.addEventListener('submit', event => {
+                    event.preventDefault();
+
+                    fetch(`http://localhost:8001/turno/${id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            fechaTurno: fechaTurnoInput.value,
+                            id: data.id,
+                            paciente: {
+                                id: idPacienteSelect.value,
+                            },
+                            odontologo: {
+                                id: idOdontologoSelect.value,
+                            },
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error al editar el turno');
+                            }
+                            editModal.hide();
+                            listarTurnos();
+                            console.log('Turno editado exitosamente');
+                            editForm.reset();
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+            listarTurnos();
+    }
+
+    var userRole;
+
+    obtenerRolUsuario()
+        .then(data => {
+            userRole = data;
+            console.log(userRole);
+            // Oculta los elementos de menú según el rol del usuario
+            if (userRole) {
+                document.querySelector('.crud-odontologos').style.display = 'none';
+                document.querySelector('.crud-pacientes').style.display = 'none';
+            }
+            // else {
+            //   document.querySelector('.solicitar-turno').style.display = 'none';
+            // }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+
+    function obtenerRolUsuario() {
+        return new Promise((resolve, reject) => {
+            fetch('http://localhost:8001/getuser/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al obtener el usuario');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    resolve(data);
+                })
+                .catch(error => {
+                    reject(error);
+                });
+        });
+    }
+</script>
+
+</body>
+</html>

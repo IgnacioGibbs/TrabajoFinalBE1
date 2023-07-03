@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Pacientes</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- navbar -->
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="../index.html">Final Back-end I</a>
+        <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/views/crud_odontologos.html"
+                    >CRUD Odontólogos</a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"
+                    >CRUD Pacientes</a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/views/solicitar_turno.html"
+                    >Solicitar Turno</a
+                    >
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Table -->
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>CRUD Pacientes</h1>
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">Crear Paciente
+            </button>
+            <table class="table" id="pacientes-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>DNI</th>
+                    <th>Fecha de Ingreso</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Los pacientes se listarán aquí dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createModalLabel">Crear Paciente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createForm">
+
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="apellido" class="form-label">Apellido</label>
+                        <input type="text" class="form-control" id="apellido" name="apellido" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="dni" class="form-label">Dni</label>
+                        <input type="number" class="form-control" id="dni" name="dni" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="fecha" class="form-label">Fecha de ingreso</label>
+                        <input type="date" class="form-control" id="fecha" name="fecha" required>
+                    </div>
+
+                    <h5 style="text-align: left">Domicilio</h5>
+
+
+                    <div class="mb-3">
+                        <label for="calle" class="form-label">Calle</label>
+                        <input type="text" class="form-control" id="calle" name="calle" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="numero" class="form-label">Altura</label>
+                        <input type="number" class="form-control" id="numero" name="numero" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="localidad" class="form-label">Localidad</label>
+                        <input type="text" class="form-control" id="localidad" name="localidad" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="provincia" class="form-label">Provincia</label>
+                        <input type="text" class="form-control" id="provincia" name="provincia" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal para editar paciente -->
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Editar Paciente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <div class="mb-3">
+                        <label for="nombreUpdate" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombreUpdate" name="nombreUpdate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="apellidoUpdate" class="form-label">Apellido</label>
+                        <input type="text" class="form-control" id="apellidoUpdate" name="apellidoUpdate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="matriculaUpdate" class="form-label">Dni</label>
+                        <input type="number" class="form-control" id="matriculaUpdate" name="matriculaUpdate" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="fechaUpdate" class="form-label">Fecha de ingreso</label>
+                        <input type="date" class="form-control" id="fechaUpdate" name="fechaUpdate" required>
+                    </div>
+
+
+                    <h5 style="text-align: left">Domicilio</h5>
+
+
+                    <div class="mb-3">
+                        <label for="calleUpdate" class="form-label">Calle</label>
+                        <input type="text" class="form-control" id="calleUpdate" name="calleUpdate" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="numeroUpdate" class="form-label">Altura</label>
+                        <input type="number" class="form-control" id="numeroUpdate" name="numeroUpdate" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="localidadUpdate" class="form-label">Localidad</label>
+                        <input type="text" class="form-control" id="localidadUpdate" name="localidadUpdate" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="provinciaUpdate" class="form-label">Provincia</label>
+                        <input type="text" class="form-control" id="provinciaUpdate" name="provinciaUpdate" required>
+                    </div>
+
+
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/js/all.min.js"></script>
+
+<script>
+    function listarPacientes() {
+        fetch('http://localhost:8001/paciente/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los pacientes');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const pacientesTable = document.getElementById('pacientes-table');
+                const tbody = pacientesTable.getElementsByTagName('tbody')[0];
+                tbody.innerHTML = '';
+
+                data.forEach(paciente => {
+                    const row = document.createElement('tr');
+                    const fechaIngreso = new Date(paciente.fechaIngreso);
+                    const dia = fechaIngreso.getDate().toString().padStart(2, '0');
+                    const mes = (fechaIngreso.getMonth() + 1).toString().padStart(2, '0');
+                    const anio = fechaIngreso.getFullYear();
+                    const fechaFormateada = `${dia}/${mes}/${anio}`;
+
+                    row.innerHTML = `
+          <td>${paciente.id}</td>
+          <td>${paciente.nombre}</td>
+          <td>${paciente.apellido}</td>
+          <td>${paciente.dni}</td>
+          <td>${fechaFormateada}</td>
+          <td>
+            <button class="btn btn-secondary btn-sm edit-button" data-id="${paciente.id}">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-danger btn-sm delete-button" data-id="${paciente.id}">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        `;
+                    tbody.appendChild(row);
+                });
+
+                const editButtons = document.getElementsByClassName('edit-button');
+                const deleteButtons = document.getElementsByClassName('delete-button');
+
+                for (let i = 0; i < editButtons.length; i++) {
+                    editButtons[i].addEventListener('click', () => {
+                        const pacienteId = editButtons[i].getAttribute('data-id');
+                        mostrarFormularioEditar(pacienteId);
+                    });
+                }
+
+                for (let i = 0; i < deleteButtons.length; i++) {
+                    deleteButtons[i].addEventListener('click', () => {
+                        const pacienteId = deleteButtons[i].getAttribute('data-id');
+                        confirmarEliminacionPaciente(pacienteId);
+                    });
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+    function confirmarEliminacionPaciente(id) {
+        if (confirm('¿Estás seguro de eliminar este paciente?')) {
+            eliminarPaciente(id);
+        }
+    }
+
+    function eliminarPaciente(id) {
+        fetch(`http://localhost:8001/paciente/${id}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al eliminar el paciente');
+                }
+                console.log('Paciente eliminado exitosamente');
+                listarPacientes();
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+    function mostrarFormularioEditar(id) {
+
+        fetch(`http://localhost:8001/paciente/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al obtener los datos del paciente');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                const editForm = document.getElementById('editForm');
+                const nombreInput = document.getElementById('nombreUpdate');
+                const apellidoInput = document.getElementById('apellidoUpdate');
+                const matriculaInput = document.getElementById('matriculaUpdate');
+                const fechaIngreso = document.getElementById('fechaUpdate');
+
+                const calleInput = document.getElementById('calleUpdate');
+                const numeroInput = document.getElementById('numeroUpdate');
+                const localidadInput = document.getElementById('localidadUpdate');
+                const provinciaInput = document.getElementById('provinciaUpdate');
+
+                nombreInput.value = data.nombre;
+                apellidoInput.value = data.apellido;
+                matriculaInput.value = parseInt(data.dni);
+                fechaIngreso.value = data.fechaIngreso;
+
+                calleInput.value = data.domicilio.calle;
+                numeroInput.value = data.domicilio.numero;
+                localidadInput.value = data.domicilio.localidad;
+                provinciaInput.value = data.domicilio.provincia;
+
+                const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+                editModal.show();
+
+                editForm.addEventListener('submit', event => {
+                    event.preventDefault();
+
+                    fetch(`http://localhost:8001/paciente/${id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            nombre: nombreInput.value,
+                            apellido: apellidoInput.value,
+                            dni: matriculaInput.value,
+                            fechaIngreso: fechaIngreso.value,
+                            domicilio: {
+                                calle: calleInput.value,
+                                numero: numeroInput.value,
+                                localidad: localidadInput.value,
+                                provincia: provinciaInput.value
+                            }
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error al editar el paciente');
+                            }
+                            editModal.hide();
+                            listarPacientes();
+                            console.log('Paciente editado exitosamente');
+                            editForm.reset();
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
+    listarPacientes();
+
+
+    const createForm = document.getElementById('createForm');
+    const createModal = new bootstrap.Modal(document.getElementById('createModal'));
+
+    createForm.addEventListener('submit', event => {
+        event.preventDefault();
+
+        const nombreInput = document.getElementById('nombre');
+        const apellidoInput = document.getElementById('apellido');
+        const dniInput = document.getElementById('dni');
+        const fechaIngreso = document.getElementById('fecha');
+
+
+        const calleInput = document.getElementById('calle');
+        const numeroInput = document.getElementById('numero');
+        const localidadInput = document.getElementById('localidad');
+        const provinciaInput = document.getElementById('provincia');
+
+
+        fetch('http://localhost:8001/paciente/', {
+            method: 'POST',
+            body: JSON.stringify({
+                nombre: nombreInput.value,
+                apellido: apellidoInput.value,
+                dni: dniInput.value,
+                fechaIngreso: fechaIngreso.value,
+                domicilio: {
+                    calle: calleInput.value,
+                    numero: numeroInput.value,
+                    localidad: localidadInput.value,
+                    provincia: provinciaInput.value
+                }
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al crear el paciente');
+                }
+                createModal.hide();
+                listarPacientes();
+                console.log('Paciente creado exitosamente');
+                createForm.reset();
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    });
+
+    listarPacientes();
+
+</script>
+
+</body>
+</html>

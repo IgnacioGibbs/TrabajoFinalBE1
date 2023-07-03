@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRUD Odontólogos</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- navbar -->
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand" href="../index.html">Final Back-end I</a>
+    <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#">CRUD Odontólogos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/views/crud_pacientes.html">CRUD Pacientes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/views/solicitar_turno.html">Solicitar Turno</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Table -->
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>CRUD Odontólogos</h1>
+      <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createModal">Crear Odontólogo</button>
+
+      <table class="table" id="odontologos-table">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>Matrícula</th>
+          <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Los odontólogos se listarán aquí dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para crear odontólogo -->
+
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createModalLabel">Crear Odontólogo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="createForm">
+          <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" required>
+          </div>
+          <div class="mb-3">
+            <label for="apellido" class="form-label">Apellido</label>
+            <input type="text" class="form-control" id="apellido" name="apellido" required>
+          </div>
+          <div class="mb-3">
+            <label for="matricula" class="form-label">Matrícula</label>
+            <input type="number" class="form-control" id="matricula" name="matricula" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Crear</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar odontólogo -->
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel">Editar Odontólogo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editForm">
+          <div class="mb-3">
+            <label for="nombreUpdate" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombreUpdate" name="nombreUpdate" required>
+          </div>
+          <div class="mb-3">
+            <label for="apellidoUpdate" class="form-label">Apellido</label>
+            <input type="text" class="form-control" id="apellidoUpdate" name="apellidoUpdate" required>
+          </div>
+          <div class="mb-3">
+            <label for="matriculaUpdate" class="form-label">Matrícula</label>
+            <input type="number" class="form-control" id="matriculaUpdate" name="matriculaUpdate" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Actualizar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/js/all.min.js"></script>
+
+<script>
+  function listarOdontologos() {
+    fetch('http://localhost:8001/odontologo/')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error al obtener los odontólogos');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const odontologosTable = document.getElementById('odontologos-table');
+        const tbody = odontologosTable.querySelector('tbody');
+        tbody.innerHTML = '';
+
+        data.forEach(odontologo => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+              <td>${odontologo.id}</td>
+              <td>${odontologo.nombre}</td>
+              <td>${odontologo.apellido}</td>
+              <td>${odontologo.matricula}</td>
+              <td>
+                <button class="btn btn-secondary btn-sm edit-button" data-id="${odontologo.id}">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-danger btn-sm delete-button" data-id="${odontologo.id}">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            `;
+          tbody.appendChild(row);
+        });
+
+        const editButtons = document.getElementsByClassName('edit-button');
+        const deleteButtons = document.getElementsByClassName('delete-button');
+
+        for (let i = 0; i < editButtons.length; i++) {
+          editButtons[i].addEventListener('click', () => {
+            const odontologoId = editButtons[i].getAttribute('data-id');
+            mostrarFormularioEditar(odontologoId);
+          });
+        }
+
+        for (let i = 0; i < deleteButtons.length; i++) {
+          deleteButtons[i].addEventListener('click', () => {
+            const odontologoId = deleteButtons[i].getAttribute('data-id');
+            confirmarEliminacionOdontologo(odontologoId);
+          });
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+  function mostrarFormularioEditar(id) {
+    fetch(`http://localhost:8001/odontologo/${id}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error al obtener los datos del odontólogo');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const editForm = document.getElementById('editForm');
+        const nombreInput = document.getElementById('nombreUpdate');
+        const apellidoInput = document.getElementById('apellidoUpdate');
+        const matriculaInput = document.getElementById('matriculaUpdate');
+
+        nombreInput.value = data.nombre;
+        apellidoInput.value = data.apellido;
+        matriculaInput.value = parseInt(data.matricula);
+
+        const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+        editModal.show();
+
+        editForm.addEventListener('submit', event => {
+          event.preventDefault();
+
+          fetch(`http://localhost:8001/odontologo/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+              nombre: nombreInput.value,
+              apellido: apellidoInput.value,
+              matricula: matriculaInput.value
+            }),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Error al editar el odontólogo');
+              }
+              editModal.hide();
+              listarOdontologos();
+              console.log('Odontólogo editado exitosamente');
+              editForm.reset();
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+  function confirmarEliminacionOdontologo(id) {
+    if (confirm('¿Estás seguro de eliminar este odontólogo?')) {
+      eliminarOdontologo(id);
+    }
+  }
+
+  function eliminarOdontologo(id) {
+    fetch(`http://localhost:8001/odontologo/${id}`, {
+      method: 'DELETE'
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error al eliminar el odontólogo');
+        }
+        console.log('Odontólogo eliminado exitosamente');
+        listarOdontologos();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+  const createForm = document.getElementById('createForm');
+  const createModal = new bootstrap.Modal(document.getElementById('createModal'));
+
+  createForm.addEventListener('submit', event => {
+    event.preventDefault();
+
+    const nombreInput = document.getElementById('nombre');
+    const apellidoInput = document.getElementById('apellido');
+    const matriculaInput = document.getElementById('matricula');
+
+    fetch('http://localhost:8001/odontologo/', {
+      method: 'POST',
+      body: JSON.stringify({
+        nombre: nombreInput.value,
+        apellido: apellidoInput.value,
+        matricula: matriculaInput.value
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error al crear el odontólogo');
+        }
+        createModal.hide();
+        listarOdontologos();
+        console.log('Odontólogo creado exitosamente');
+        createForm.reset();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  });
+
+  listarOdontologos();
+</script>
+
+</body>
+</html>
+
+
